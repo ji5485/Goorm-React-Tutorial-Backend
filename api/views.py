@@ -40,8 +40,16 @@ class CounterClass(APIView):
       counter.save()
       queryset = Counter.objects.all()
 
-    serializer = CounterSerializer(queryset)
-    return Response(serializer.data)
+    return Response(queryset[0].number)
 
   def post(self, request, format=None):
-    pass
+    num = request.data
+
+    queryset = Counter.objects.all()
+
+    if queryset.count() == 0:
+      return Response({ 'result': 'No Counter Instance in Django Server' }, status=status.HTTP_404_NOT_FOUND)
+
+    queryset.update(number=num)
+
+    return Response(queryset[0].number)
