@@ -22,14 +22,14 @@ class PhoneBook(APIView):
       serializer.save()
       flag = True
 
-    return Response({flag: flag}, status=status.HTTP_201_CREATED if flag else status.HTTP_400_BAD_REQUEST)
+    return Response(serializer.data, status=status.HTTP_201_CREATED if flag else status.HTTP_400_BAD_REQUEST)
 
   # 전화번호부 아이템 제거
   def delete(self, request, format=None):
-    id = request.data.get('id')
-    post = Phone.objects.get(id=id)
-    post.delete()
-    return Response(status=status.HTTP_204_NO_CONTENT)
+    phoneId = request.query_params.get('id')
+    phone = Phone.objects.get(id=phoneId)
+    phone.delete()
+    return Response({"id": phoneId})
 
 class CounterClass(APIView):
   def get(self, request, format=None):
@@ -43,7 +43,7 @@ class CounterClass(APIView):
     return Response(queryset[0].number)
 
   def post(self, request, format=None):
-    num = request.data
+    num = request.data.get("number")
 
     queryset = Counter.objects.all()
 
